@@ -1,0 +1,11 @@
+# Python-Umgebung
+venv/
+backend/venv/
+
+# Geheime Schlüssel (WICHTIG!)
+.env
+backend/.env
+
+# Systemdateien
+*.pyc
+__pycache__/

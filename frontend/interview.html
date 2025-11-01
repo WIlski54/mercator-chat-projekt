@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview mit Gerhard Mercator</title>
+    <style>
+        /* Minimalistisches Styling, damit es schnell geht */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .chat-container {
+            width: 90%;
+            max-width: 600px;
+            height: 80vh;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .speech-bubble {
+            padding: 20px;
+            background-color: #e9ecef;
+            margin: 20px;
+            border-radius: 10px;
+            min-height: 100px;
+            overflow-y: auto; /* Falls die Antwort lang ist */
+        }
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid #ccc;
+        }
+        #chat-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            box-sizing: border-box; /* Wichtig für 100% Breite */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="speech-bubble" id="speech-bubble">
+            ... lade Mercator ...
+        </div>
+
+        <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Stelle hier deine Frage an Mercator...">
+        </div>
+    </div>
+
+    <script>
+        const speechBubble = document.getElementById('speech-bubble');
+        const chatInput = document.getElementById('chat-input');
+        
+        // DAS IST DIE WICHTIGSTE ZEILE:
+        // Wir sagen dem JavaScript, wo unser Backend läuft.
+        const API_URL = 'http://127.0.0.1:5000/chat-mercator';
+
+        let tippAnimation; // Für den Wort-für-Wort-Effekt
+
+        // Funktion, um Text Wort für Wort anzuzeigen (wie bei Ihrem Essam-Projekt)
+        function zeigeTextWortFuerWort(text, callback) {
+            const woerter = text.split(' ');
+            let i = 0;
+            speechBubble.textContent = '';
+            if (tippAnimation) clearInterval(tippAnimation);
+
+            tippAnimation = setInterval(() => {
+                if (i < woerter.length) {
+                    speechBubble.textContent += woerter[i] + ' ';
+                    i++;
+                } else {
+                    clearInterval(tippAnimation);
+                    if (callback) callback();
+                }
+            }, 100); // Geschwindigkeit
+        }
+
+        // Startnachricht beim Laden der Seite
+        window.addEventListener('load', () => {
+            // Wir rufen den Bot OHNE Frage auf, um die Begrüßung zu erhalten
+            // (Unser System-Prompt sagt ihm, er soll IMMER mit einer Begrüßung starten)
+            // Stattdessen können wir auch einfach eine statische Begrüßung nehmen:
+            zeigeTextWortFuerWort('Seid gegrüßt, Wanderer. Ich bin Gerhard Mercator. Was führt Euch ins Duisburg meiner Zeit?', () => {});
+        });
+        
+
+        // Diese Funktion wird ausgelöst, wenn der Schüler ENTER drückt
+        chatInput.addEventListener('keydown', async function(event) {
+            if (event.key === 'Enter' && chatInput.value.trim() !== '') {
+                const userFrage = chatInput.value;
+                chatInput.value = ''; // Eingabefeld leeren
+
+                const ladeText = 'Ich sinniere über Eure Frage...';
+                zeigeTextWortFuerWort(ladeText, () => {});
+                
+                try {
+                    // 1. Frage an das Backend (http://127.0.0.1:5000) senden
+                    const response = await fetch(API_URL, { 
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: userFrage }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                    }
+
+                    // 2. Antwort vom Backend (JSON) empfangen
+                    const data = await response.json();
+                    const aiAntwort = data.reply;
+                    
+                    // 3. Antwort in der Sprechblase anzeigen
+                    zeigeTextWortFuerWort(aiAntwort, () => {});
+
+                } catch (error) {
+                    console.error('Fehler:', error);
+                    zeigeTextWortFuerWort('Verzeihung, edler Herr. Es gab ein Problem mit dem Aether. (' + error.message + ')', () => {});
+                }
+            }
+        });
+    </script>
+</body>
+</html>
