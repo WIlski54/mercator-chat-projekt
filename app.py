@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -16,7 +16,6 @@ client = OpenAI(
 app = Flask(__name__)
 
 # CORS (Cross-Origin Resource Sharing) aktivieren
-# Erlaubt dem Frontend (anderer Server) mit diesem Backend zu sprechen
 CORS(app) 
 
 # Der System-Prompt: Das "Gehirn" von Mercator
@@ -31,6 +30,11 @@ Antworts informativ über dein Leben in Duisburg, deine Arbeit an den Karten
 und deine Weltanschauung. Halte deine Antworten relativ kurz und 
 im Gesprächs-Stil.
 """
+
+# Route für die Startseite
+@app.route('/')
+def home():
+    return render_template('interview.html')
 
 # Unsere Haupt-API-Route. Sie wird unter "/chat-mercator" erreichbar sein
 @app.route('/chat-mercator', methods=['POST', 'OPTIONS'])
@@ -62,7 +66,7 @@ def chat_with_mercator():
             # 3. Die Antwort der KI extrahieren
             ai_response = completion.choices[0].message.content
 
-            # 4. Die Antwort im selben Format zurücksenden, das Ihr "Essam"-Frontend erwartet
+            # 4. Die Antwort zurücksenden
             return jsonify({"reply": ai_response})
 
         except Exception as e:
@@ -77,6 +81,8 @@ def _build_cors_preflight_response():
     response.headers.add("Access-Control-Allow-Methods", "POST,OPTIONS")
     return response
 
-# Startet den Server, wenn wir die Datei direkt ausführen
+# Startet den Server
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # Wichtig für Render.com: Port aus Umgebungsvariable lesen
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

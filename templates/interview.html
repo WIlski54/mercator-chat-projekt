@@ -63,13 +63,13 @@
         const speechBubble = document.getElementById('speech-bubble');
         const chatInput = document.getElementById('chat-input');
         
-        // DAS IST DIE WICHTIGSTE ZEILE:
-        // Wir sagen dem JavaScript, wo unser Backend läuft.
-        const API_URL = 'http://127.0.0.1:5000/chat-mercator';
+        // WICHTIG: Für Render.com verwenden wir einen relativen Pfad
+        // Das funktioniert, weil Frontend und Backend auf derselben Domain laufen
+        const API_URL = '/chat-mercator';
 
         let tippAnimation; // Für den Wort-für-Wort-Effekt
 
-        // Funktion, um Text Wort für Wort anzuzeigen (wie bei Ihrem Essam-Projekt)
+        // Funktion, um Text Wort für Wort anzuzeigen
         function zeigeTextWortFuerWort(text, callback) {
             const woerter = text.split(' ');
             let i = 0;
@@ -89,9 +89,6 @@
 
         // Startnachricht beim Laden der Seite
         window.addEventListener('load', () => {
-            // Wir rufen den Bot OHNE Frage auf, um die Begrüßung zu erhalten
-            // (Unser System-Prompt sagt ihm, er soll IMMER mit einer Begrüßung starten)
-            // Stattdessen können wir auch einfach eine statische Begrüßung nehmen:
             zeigeTextWortFuerWort('Seid gegrüßt, Wanderer. Ich bin Gerhard Mercator. Was führt Euch ins Duisburg meiner Zeit?', () => {});
         });
         
@@ -106,7 +103,7 @@
                 zeigeTextWortFuerWort(ladeText, () => {});
                 
                 try {
-                    // 1. Frage an das Backend (http://127.0.0.1:5000) senden
+                    // 1. Frage an das Backend senden (jetzt mit relativem Pfad)
                     const response = await fetch(API_URL, { 
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
