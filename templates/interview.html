@@ -3,130 +3,936 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview mit Gerhard Mercator</title>
+    <title>Gespräch mit Gerhard Mercator - Duisburg 1569</title>
+    
+    <!-- Historische Schriftarten -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
     <style>
-        /* Minimalistisches Styling, damit es schnell geht */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .chat-container {
-            width: 90%;
-            max-width: 600px;
-            height: 80vh;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background: #fff;
+
+        :root {
+            --parchment-light: #f4e8d0;
+            --parchment-dark: #d4b896;
+            --ink-black: #2c2416;
+            --gold: #b8860b;
+            --gold-light: #daa520;
+            --shadow-dark: rgba(44, 36, 22, 0.3);
+            --border-ornate: #8b6f47;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            background: var(--ink-black);
+        }
+
+        /* Hintergrundbild mit Overlay */
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .background-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.4) brightness(0.4);
+        }
+
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                rgba(44, 36, 22, 0.85) 0%,
+                rgba(44, 36, 22, 0.75) 50%,
+                rgba(44, 36, 22, 0.85) 100%
+            );
+        }
+
+        /* Hauptcontainer */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .speech-bubble {
+            align-items: center;
             padding: 20px;
-            background-color: #e9ecef;
-            margin: 20px;
-            border-radius: 10px;
-            min-height: 100px;
-            overflow-y: auto; /* Falls die Antwort lang ist */
         }
-        .chat-input-container {
-            padding: 20px;
-            border-top: 1px solid #ccc;
-        }
-        #chat-input {
+
+        /* Header mit Wappen */
+        .header {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
+            max-width: 900px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .coat-of-arms {
+            width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--parchment-light);
+            font-style: italic;
+        }
+
+        /* Chat Container - Pergament-Stil */
+        .chat-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--parchment-light);
+            border: 3px solid var(--border-ornate);
+            border-radius: 15px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.7),
+                inset 0 0 100px rgba(212, 184, 150, 0.3);
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+        }
+
+        /* Ornamentale Ecken */
+        .chat-container::before,
+        .chat-container::after {
+            content: '❦';
+            position: absolute;
+            font-size: 2rem;
+            color: var(--gold);
+            opacity: 0.3;
+            z-index: 1;
+        }
+
+        .chat-container::before {
+            top: 10px;
+            left: 10px;
+        }
+
+        .chat-container::after {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        /* Mercator Header */
+        .mercator-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 25px;
+            background: linear-gradient(to bottom, var(--parchment-dark), var(--parchment-light));
+            border-bottom: 2px solid var(--border-ornate);
+            animation: slideInLeft 1s ease-out 0.6s both;
+            position: relative;
+        }
+
+        .mercator-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .mercator-portrait {
+            width: 80px;
+            height: auto;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            margin-right: 20px;
+            animation: rotateIn 1s ease-out 0.8s both;
+        }
+
+        .mercator-info h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--ink-black);
+            margin-bottom: 5px;
+        }
+
+        .mercator-info p {
+            font-size: 1rem;
+            color: #5a4a3a;
+            font-style: italic;
+        }
+
+        /* Globus rechts */
+        .globe-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            animation: fadeIn 2s ease-out 1s both;
+            margin-right: 10px;
+        }
+
+        .globe-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Chat-Bereich */
+        .chat-messages {
+            padding: 30px;
+            min-height: 400px;
+            max-height: 500px;
+            overflow-y: auto;
+            background-image: 
+                repeating-linear-gradient(
+                    transparent,
+                    transparent 30px,
+                    rgba(139, 111, 71, 0.1) 30px,
+                    rgba(139, 111, 71, 0.1) 31px
+                );
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Scrollbar Styling */
+        .chat-messages::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: var(--parchment-dark);
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-ornate);
+            border-radius: 5px;
+        }
+
+        /* Message Wrapper */
+        .message {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Sprechblase für Mercator */
+        .speech-bubble {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--border-ornate);
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: var(--ink-black);
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .speech-bubble::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 3rem;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+        }
+
+        /* User-Nachricht Bubble */
+        .user-bubble {
+            background: rgba(232, 212, 184, 0.8);
+            border: 2px solid var(--border-ornate);
+            border-radius: 15px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--ink-black);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+            align-self: flex-end;
+            max-width: 80%;
+        }
+
+        /* Sender Label */
+        .sender-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .message.user .sender-label {
+            text-align: right;
+        }
+
+        /* Input-Bereich */
+        .chat-input-container {
+            padding: 25px;
+            background: linear-gradient(to top, var(--parchment-dark), var(--parchment-light));
+            border-top: 2px solid var(--border-ornate);
+            animation: slideInUp 1s ease-out 0.9s both;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--border-ornate);
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px 20px;
+            font-size: 1.05rem;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink-black);
+            outline: none;
+        }
+
+        #chat-input::placeholder {
+            color: #8b7355;
+            font-style: italic;
+        }
+
+        .send-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .send-icon:hover {
+            background: var(--gold-light);
+            transform: scale(1.1);
+        }
+
+        .send-icon::after {
+            content: '→';
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: inline-block;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Pergament Modal für Bilder */
+        .pergament-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .pergament-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pergament-content {
+            background: var(--parchment-light);
+            border: 4px solid var(--border-ornate);
             border-radius: 20px;
-            box-sizing: border-box; /* Wichtig für 100% Breite */
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.9),
+                inset 0 0 100px rgba(212, 184, 150, 0.3);
+            position: relative;
+            padding: 40px;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        .pergament-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2rem;
+            color: var(--gold);
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .pergament-close:hover {
+            transform: scale(1.2);
+        }
+
+        .pergament-image {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid var(--border-ornate);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .pergament-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--ink-black);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .pergament-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #5a4a3a;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--parchment-dark);
+            border-top: 5px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 50px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Animationen */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotateIn {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg) scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: rotate(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 0.95rem;
+            }
+
+            .coat-of-arms {
+                width: 60px;
+            }
+
+            .mercator-portrait {
+                width: 60px;
+            }
+
+            .mercator-info h2 {
+                font-size: 1.4rem;
+            }
+
+            .globe-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .chat-messages {
+                min-height: 300px;
+                max-height: 400px;
+                padding: 20px;
+            }
+
+            .speech-bubble {
+                font-size: 1rem;
+                padding: 15px;
+            }
+
+            .user-bubble {
+                font-size: 1rem;
+                padding: 12px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
+            .mercator-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .mercator-left {
+                flex-direction: column;
+                margin-bottom: 15px;
+            }
+
+            .mercator-portrait {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+
+            .globe-container {
+                width: 80px;
+                height: 80px;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="chat-container">
-        <div class="speech-bubble" id="speech-bubble">
-            ... lade Mercator ...
+    <!-- Hintergrundbild -->
+    <div class="background-image">
+        <img src="{{ url_for('static', filename='duisburg.png') }}" alt="Duisburg im 16. Jahrhundert">
+        <div class="background-overlay"></div>
+    </div>
+
+    <!-- Hauptcontainer -->
+    <div class="main-container">
+        
+        <!-- Header -->
+        <div class="header">
+            <img src="{{ url_for('static', filename='stadtwappen.png') }}" alt="Stadtwappen Duisburg" class="coat-of-arms">
+            <h1 class="title">Audienz bei Mercator</h1>
+            <p class="subtitle">Duisburg, Anno Domini 1569</p>
         </div>
 
-        <div class="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Stelle hier deine Frage an Mercator...">
+        <!-- Chat Container -->
+        <div class="chat-container">
+            
+            <!-- Mercator Header -->
+            <div class="mercator-header">
+                <div class="mercator-left">
+                    <img src="{{ url_for('static', filename='mercator.png') }}" alt="Gerhard Mercator" class="mercator-portrait">
+                    <div class="mercator-info">
+                        <h2>Gerhard Mercator</h2>
+                        <p>Kartograph, Kosmograph & Gelehrter</p>
+                    </div>
+                </div>
+                <!-- Globus rechts -->
+                <div class="globe-container">
+                    <img src="{{ url_for('static', filename='images/globus.png') }}" alt="Mercators Globus" class="globe-image">
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Nachrichten werden hier dynamisch eingefügt -->
+            </div>
+
+            <!-- Input Area -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Stellt Eure Frage an den Meister..."
+                        autocomplete="off"
+                    >
+                    <div class="send-icon" id="send-button"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Pergament Modal für Bilder -->
+    <div class="pergament-modal" id="pergament-modal">
+        <div class="pergament-content">
+            <span class="pergament-close" id="pergament-close">&times;</span>
+            <div id="pergament-body">
+                <!-- Bild wird hier eingefügt -->
+            </div>
         </div>
     </div>
 
     <script>
-        const speechBubble = document.getElementById('speech-bubble');
+        const chatMessages = document.getElementById('chat-messages');
         const chatInput = document.getElementById('chat-input');
+        const sendButton = document.getElementById('send-button');
+        const pergamentModal = document.getElementById('pergament-modal');
+        const pergamentContent = document.getElementById('pergament-body');
+        const closeModal = document.getElementById('pergament-close');
         
-        // WICHTIG: Für Render.com verwenden wir einen relativen Pfad
-        // Das funktioniert, weil Frontend und Backend auf derselben Domain laufen
-        const API_URL = '/chat-mercator';
+        // API URLs - relativ für Render.com, localhost für lokale Entwicklung
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://127.0.0.1:5000/chat-mercator'
+            : '/chat-mercator';
 
-        let tippAnimation; // Für den Wort-für-Wort-Effekt
+        const IMAGE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://127.0.0.1:5000/get-image'
+            : '/get-image';
 
-        // Funktion, um Text Wort für Wort anzuzeigen
-        function zeigeTextWortFuerWort(text, callback) {
-            const woerter = text.split(' ');
-            let i = 0;
-            speechBubble.textContent = '';
-            if (tippAnimation) clearInterval(tippAnimation);
+        let isTyping = false;
+        let conversationHistory = [];
 
-            tippAnimation = setInterval(() => {
-                if (i < woerter.length) {
-                    speechBubble.textContent += woerter[i] + ' ';
-                    i++;
-                } else {
-                    clearInterval(tippAnimation);
-                    if (callback) callback();
-                }
-            }, 100); // Geschwindigkeit
-        }
-
-        // Startnachricht beim Laden der Seite
-        window.addEventListener('load', () => {
-            zeigeTextWortFuerWort('Seid gegrüßt, Wanderer. Ich bin Gerhard Mercator. Was führt Euch ins Duisburg meiner Zeit?', () => {});
+        // Modal schließen
+        closeModal.addEventListener('click', () => {
+            pergamentModal.classList.remove('active');
         });
-        
 
-        // Diese Funktion wird ausgelöst, wenn der Schüler ENTER drückt
-        chatInput.addEventListener('keydown', async function(event) {
-            if (event.key === 'Enter' && chatInput.value.trim() !== '') {
-                const userFrage = chatInput.value;
-                chatInput.value = ''; // Eingabefeld leeren
-
-                const ladeText = 'Ich sinniere über Eure Frage...';
-                zeigeTextWortFuerWort(ladeText, () => {});
-                
-                try {
-                    // 1. Frage an das Backend senden (jetzt mit relativem Pfad)
-                    const response = await fetch(API_URL, { 
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: userFrage }),
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
-                    }
-
-                    // 2. Antwort vom Backend (JSON) empfangen
-                    const data = await response.json();
-                    const aiAntwort = data.reply;
-                    
-                    // 3. Antwort in der Sprechblase anzeigen
-                    zeigeTextWortFuerWort(aiAntwort, () => {});
-
-                } catch (error) {
-                    console.error('Fehler:', error);
-                    zeigeTextWortFuerWort('Verzeihung, edler Herr. Es gab ein Problem mit dem Aether. (' + error.message + ')', () => {});
-                }
+        pergamentModal.addEventListener('click', (e) => {
+            if (e.target === pergamentModal) {
+                pergamentModal.classList.remove('active');
             }
         });
+
+        // Bild auf Pergament anzeigen
+        function showImageOnPergament(imageUrl, title, description) {
+            pergamentContent.innerHTML = `
+                <img src="${imageUrl}" alt="${title}" class="pergament-image">
+                <h2 class="pergament-title">${title}</h2>
+                ${description ? `<p class="pergament-description">${description}</p>` : ''}
+            `;
+            pergamentModal.classList.add('active');
+        }
+
+        // Bild anfragen
+        async function requestImage(query) {
+            pergamentContent.innerHTML = '<div class="loading-spinner"></div>';
+            pergamentModal.classList.add('active');
+            
+            try {
+                const response = await fetch(IMAGE_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Bildsuche fehlgeschlagen');
+                }
+                
+                const data = await response.json();
+                
+                if (data.image_url) {
+                    showImageOnPergament(data.image_url, data.title, data.description);
+                } else {
+                    pergamentContent.innerHTML = `
+                        <h2 class="pergament-title">Kein Abbild gefunden</h2>
+                        <p class="pergament-description">Verzeiht, werter Gast. Von diesem Werk habe ich leider kein Abbild zur Hand.</p>
+                    `;
+                }
+            } catch (error) {
+                console.error('Fehler beim Laden des Bildes:', error);
+                pergamentContent.innerHTML = `
+                    <h2 class="pergament-title">Fehler</h2>
+                    <p class="pergament-description">Es gab ein Problem beim Laden des Abbilds.</p>
+                `;
+            }
+        }
+
+        // Funktion um eine Nachricht hinzuzufügen
+        function addMessage(role, content) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            if (role === 'user') {
+                messageDiv.innerHTML = `
+                    <div class="sender-label">Ihr</div>
+                    <div class="user-bubble">${content}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="sender-label">Mercator</div>
+                    <div class="speech-bubble">${content}</div>
+                `;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        // Typing Indicator anzeigen
+        function showTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typing-indicator-msg';
+            typingDiv.innerHTML = `
+                <div class="sender-label">Mercator</div>
+                <div class="speech-bubble">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Typing Indicator entfernen
+        function removeTypingIndicator() {
+            const typingMsg = document.getElementById('typing-indicator-msg');
+            if (typingMsg) {
+                typingMsg.remove();
+            }
+        }
+
+        // Wort-für-Wort Animation
+        function animateText(element, text, callback) {
+            const words = text.split(' ');
+            let i = 0;
+            element.textContent = '';
+            
+            const interval = setInterval(() => {
+                if (i < words.length) {
+                    element.textContent += words[i] + ' ';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    if (callback) callback();
+                }
+            }, 80);
+        }
+
+        // Begrüßung beim Laden
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const welcomeText = 'Seid gegrüßt, werter Besucher. Ich bin Gerhard Mercator, Kartograph und Kosmograph. ' +
+                    'Ihr findet mich hier in meiner Werkstatt zu Duisburg, wo ich an meinen Karten der Welt arbeite. ' +
+                    'Was führt Euch zu mir?';
+                
+                const messageDiv = addMessage('assistant', '');
+                const bubble = messageDiv.querySelector('.speech-bubble');
+                animateText(bubble, welcomeText);
+                
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: welcomeText
+                });
+            }, 500);
+        });
+
+        // Nachricht senden
+        async function sendeNachricht() {
+            if (isTyping || chatInput.value.trim() === '') return;
+
+            const userFrage = chatInput.value.trim();
+            chatInput.value = '';
+            
+            // User-Nachricht anzeigen
+            addMessage('user', userFrage);
+            
+            // Zur History hinzufügen
+            conversationHistory.push({
+                role: 'user',
+                content: userFrage
+            });
+            
+            // Typing Indicator
+            isTyping = true;
+            showTypingIndicator();
+            
+            try {
+                // API Call mit kompletter History
+                const response = await fetch(API_URL, { 
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: userFrage,
+                        history: conversationHistory
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const aiAntwort = data.reply;
+                
+                // Prüfen, ob der Server ein Bild senden will
+                if (data.show_image && data.image_query) {
+                    console.log(`💡 Server hat Bild-Anfrage gesendet für: ${data.image_query}`);
+                    requestImage(data.image_query); 
+                }
+                
+                // Typing Indicator entfernen
+                removeTypingIndicator();
+                
+                // Mercator-Antwort anzeigen
+                const messageDiv = addMessage('assistant', '');
+                const bubble = messageDiv.querySelector('.speech-bubble');
+                animateText(bubble, aiAntwort, () => {
+                    isTyping = false;
+                });
+                
+                // Zur History hinzufügen
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: aiAntwort
+                });
+
+            } catch (error) {
+                console.error('Fehler:', error);
+                removeTypingIndicator();
+                
+                const errorMsg = 'Verzeiht, werter Gast. Ein seltsames Phänomen hindert mich daran, ' +
+                    'Euch eine Antwort zu geben. Versucht es doch in einem Augenblick erneut.';
+                
+                const messageDiv = addMessage('assistant', '');
+                const bubble = messageDiv.querySelector('.speech-bubble');
+                animateText(bubble, errorMsg, () => {
+                    isTyping = false;
+                });
+            }
+        }
+
+        // Event Listeners
+        chatInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                sendeNachricht();
+            }
+        });
+
+        sendButton.addEventListener('click', sendeNachricht);
+        chatInput.focus();
     </script>
 </body>
 </html>
