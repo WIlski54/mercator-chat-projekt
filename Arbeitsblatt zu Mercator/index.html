@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>Arbeitsblatt – Gerhard Mercator (Digital, iPad-optimiert)</title>
+<style>
+  :root{
+    --ink:#2a1f14; --ink-soft:#4a3a2a;
+    --accent:#7a5c3a; --gold:#b08a4b;
+    --paper:#f4eddc; --paper-deep:#e9dfc6;
+    --shadow:0 20px 40px rgba(0,0,0,.18);
+    --sketch-h: 260px; /* Basis-Höhe; wird per JS auf ×2 gestellt */
+  }
+
+  html,body{ margin:0;
+    background:
+      radial-gradient(1200px 800px at 20% 10%, rgba(0,0,0,.05), transparent 60%),
+      radial-gradient(1000px 600px at 80% 90%, rgba(0,0,0,.06), transparent 60%),
+      linear-gradient(180deg, #efe7d1, #f7f0dd 40%, #efe6cd);
+    color:var(--ink);
+    font-family: "Georgia","Times New Roman",serif;
+    line-height:1.55;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .page{
+    max-width: 1000px; margin: 32px auto; padding: 28px;
+    background:
+      radial-gradient(1200px 900px at 30% 20%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(900px 700px at 80% 70%, rgba(255,255,255,.32), transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, var(--paper-deep) 100%);
+    box-shadow: var(--shadow); border-radius: 12px; border: 1px solid rgba(0,0,0,.08);
+    position: relative; overflow: hidden;
+  }
+  .page:before,.page:after{ content:""; position:absolute; inset:-60px -60px auto auto;
+    background:
+      radial-gradient(closest-side, rgba(0,0,0,.06), rgba(0,0,0,0)),
+      radial-gradient(closest-side, rgba(0,0,0,.05), rgba(0,0,0,0));
+    width:240px;height:240px; filter: blur(1px); transform: rotate(15deg); pointer-events:none;
+  }
+  .page:after{ inset:auto auto -60px -60px; transform: rotate(-15deg); }
+
+  header{ text-align:center; margin-bottom: 18px; }
+  .title{ font-variant: small-caps; letter-spacing:.06em;
+    font-size: clamp(26px,4vw,40px); margin:8px 0 2px; color:var(--ink);
+    text-shadow: 0 1px 0 rgba(255,255,255,.35);
+  }
+  .subtitle{ color:var(--ink-soft); margin:0 0 14px; }
+
+  .ornament{ height:10px; margin:14px auto 8px; max-width:360px;
+    background:
+      linear-gradient(90deg, transparent, var(--gold), transparent),
+      repeating-linear-gradient(90deg, transparent 0 6px, rgba(0,0,0,.08) 6px 7px, transparent 7px 13px);
+    mask:
+      radial-gradient(10px 10px at 10px 50%, #000 95%, transparent),
+      radial-gradient(10px 10px at calc(100% - 10px) 50%, #000 95%, transparent);
+    border-radius: 50px; opacity:.9;
+  }
+
+  .toolbar{
+    position: sticky; top: 0; z-index: 50;
+    display:flex; flex-wrap:wrap; gap:12px;
+    padding:12px; margin:-28px -28px 16px;
+    background: linear-gradient(180deg, rgba(247,240,221,.95), rgba(247,240,221,.65));
+    border-bottom:1px solid rgba(0,0,0,.08); backdrop-filter: blur(6px);
+  }
+  button{
+    appearance:none; border:none; cursor:pointer;
+    padding:14px 16px; border-radius: 999px;
+    background: linear-gradient(180deg, #fff4e1, #f1d9ae);
+    color: var(--ink);
+    border:1px solid rgba(0,0,0,.18);
+    box-shadow: 0 2px 0 rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.7);
+    font-weight:600; font-size:16px;
+  }
+  button:active{ transform: translateY(1px); }
+  .primary{ background: linear-gradient(180deg, #fcecc5, #efc77f); }
+  .danger{ background: linear-gradient(180deg, #f7d6d6, #e7b1b1); color:#3a1a1a; }
+  .success{ background: linear-gradient(180deg, #d7eedf, #bfe0cc); color:#153822; }
+  .ghost{ background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.4)); }
+
+  .switch{
+    display:inline-flex; align-items:center; gap:8px; font-size:15px; color:var(--ink-soft);
+    padding:10px 12px; border-radius:999px; border:1px solid rgba(0,0,0,.12);
+    background: rgba(255,255,255,.6);
+  }
+
+  .info-bar{
+    display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:12px;
+    margin:14px 0 18px; padding:12px;
+    border: 1px solid rgba(0,0,0,.08);
+    background: linear-gradient(180deg, rgba(255,255,255,.4), rgba(255,255,255,.15));
+    border-radius: 10px;
+  }
+  label{ font-size:16px; color: var(--ink-soft); display:block; margin-bottom:6px; }
+  input[type="text"], input[type="date"], textarea, select{
+    width:100%; padding:12px 14px; border-radius:10px;
+    border:1px solid rgba(0,0,0,.18); background:#fff8ef;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.6);
+    font-size:17px; color:var(--ink);
+  }
+  textarea{ min-height:120px; resize: vertical; }
+
+  section{
+    margin:18px 0 22px; padding:16px 14px;
+    border:1px solid rgba(0,0,0,.08); border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,.50), rgba(255,255,255,.12));
+  }
+  h2{ font-variant: small-caps; letter-spacing:.05em; color:var(--ink);
+    margin:0 0 10px; display:flex; align-items:baseline; gap:10px; }
+  h2 .cap{ font-size:1.4em; line-height:1; color:var(--accent); }
+  .hint{ font-size:15px; color:var(--ink-soft); margin:6px 0 10px; }
+
+  .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap:12px; }
+
+  table{ width:100%; border-collapse: collapse; background:#fffdf7;
+    border-radius:10px; overflow:hidden; border:1px solid rgba(0,0,0,.12); }
+  th,td{ padding:12px; border-bottom:1px solid rgba(0,0,0,.08); text-align:left; }
+  th{ font-variant: small-caps; letter-spacing:.04em;
+    background: linear-gradient(180deg, #fff6e6, #f8edd6); }
+  tr:last-child td{ border-bottom:none; }
+
+  .canvas-tools{ display:flex; gap:10px; margin:8px 0; flex-wrap:wrap }
+  .size-tools{ display:flex; gap:10px; margin:4px 0 10px; flex-wrap:wrap }
+
+  .canvas-box{ height: var(--sketch-h); background:#fffdf7; border:1px dashed rgba(0,0,0,.2);
+    border-radius: 10px; position:relative; overflow:hidden; }
+  .canvas-box canvas{ width:100%; height:100%; display:block; touch-action: none; }
+
+  details{
+    border:1px solid rgba(0,0,0,.12); border-radius:10px;
+    background: linear-gradient(180deg, #fff6e6, #f9efdb);
+    padding:12px 14px; margin: 8px 0 12px;
+  }
+  details > summary{ list-style:none; cursor:pointer; font-weight:700; font-variant:small-caps; letter-spacing:.04em; }
+  details > summary::-webkit-details-marker{ display:none; }
+  .hintlist{ margin:8px 0 0 0; padding-left:18px; }
+  .hintlist li{ margin:4px 0; }
+
+  .criteria{ display:grid; grid-template-columns: repeat(2,1fr); gap:8px 16px; margin-top:10px; }
+  .criteria label{ display:flex; align-items:center; gap:8px; font-size:15px; margin:0; }
+
+  footer{ margin-top:18px; text-align:center; font-size:13px; color:var(--ink-soft); }
+
+  @page{ size: A4; margin: 14mm; }
+  @media print{
+    .toolbar{ display:none !important; }
+    .page{ box-shadow:none; margin:0; border:none; border-radius:0;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    input, textarea, select{ background: transparent; border:1px solid rgba(0,0,0,.3); }
+    details{ border-color: rgba(0,0,0,.2); }
+  }
+</style>
+</head>
+<body>
+<div class="page" id="sheet">
+  <div class="toolbar" role="toolbar" aria-label="Werkzeuge">
+    <button class="primary" id="btn-save-json" title="Arbeitsstand als JSON speichern">💾 Speichern (JSON)</button>
+    <button id="btn-share-json" class="ghost" title="Per iOS-Teilen senden (wenn verfügbar)">📤 Teilen</button>
+    <input type="file" id="file-load-json" accept="application/json" style="display:none" />
+    <button id="btn-load-json" class="ghost" title="Gespeicherte JSON laden">📂 Laden (Datei)</button>
+    <button id="btn-paste-json" class="ghost" title="JSON aus Zwischenablage einfügen">📋 Einfügen</button>
+    <button id="btn-copy-json" class="ghost" title="JSON in Zwischenablage kopieren">📑 Kopieren</button>
+    <button id="btn-print" class="success" title="Als PDF exportieren (Drucken)">🖨️ PDF exportieren</button>
+    <button id="btn-reset" class="danger" title="Alle Eingaben löschen">↺ Zurücksetzen</button>
+    <label class="switch" title="Automatisch lokal speichern (nur auf diesem Gerät)">
+      <input type="checkbox" id="autosave-toggle" />
+      <span>Auto-Save aktivieren</span>
+    </label>
+  </div>
+
+  <header>
+    <div class="ornament"></div>
+    <h1 class="title">Arbeitsblatt – Gerhard Mercator</h1>
+    <p class="subtitle">Der Mann, der die Welt auf Papier brachte</p>
+    <div class="ornament"></div>
+  </header>
+
+  <div class="info-bar">
+    <div>
+      <label for="fld-name">Name</label>
+      <input id="fld-name" type="text" placeholder="Vorname, Nachname" />
+    </div>
+    <div>
+      <label for="fld-class">Klasse/Kurs</label>
+      <input id="fld-class" type="text" placeholder="z. B. 9e / E-Kurs" />
+    </div>
+    <div>
+      <label for="fld-date">Datum</label>
+      <input id="fld-date" type="date" />
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="cap">§</span> Wer war Gerhard Mercator?</h2>
+    <p class="hint">Notiere 3 wichtigste Fakten in einfachen Sätzen.</p>
+    <div class="grid-3">
+      <textarea id="fact1" placeholder="Wichtigster Fakt #1 …"></textarea>
+      <textarea id="fact2" placeholder="Wichtigster Fakt #2 …"></textarea>
+      <textarea id="fact3" placeholder="Wichtigster Fakt #3 …"></textarea>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="cap">§</span> Verständnisfragen</h2>
+    <div class="grid-2">
+      <div><label>1) Wo und wann wurde er geboren?</label><textarea id="q1"></textarea></div>
+      <div><label>2) Was ist die Mercator-Projektion?</label><textarea id="q2"></textarea></div>
+      <div><label>3) Warum wichtig für Seefahrer?</label><textarea id="q3"></textarea></div>
+      <div><label>4) Wo lebte er bis zum Tod?</label><textarea id="q4"></textarea></div>
+      <div><label>5) Warum heißen Atlanten „Atlas“?</label><textarea id="q5"></textarea></div>
+      <div><label>6) Welche Schwierigkeiten hatte er?</label><textarea id="q6"></textarea></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="cap">§</span> Begriffe erklären</h2>
+    <p class="hint">Erkläre kurz mit eigenen Worten.</p>
+    <table>
+      <thead><tr><th>Fachwort</th><th>Meine Erklärung</th></tr></thead>
+      <tbody>
+        <tr><td>Kartograf</td><td><input type="text" id="w1" placeholder="…"></td></tr>
+        <tr><td>Projektion</td><td><input type="text" id="w2" placeholder="…"></td></tr>
+        <tr><td>Kompass</td><td><input type="text" id="w3" placeholder="…"></td></tr>
+        <tr><td>Atlas</td><td><input type="text" id="w4" placeholder="…"></td></tr>
+        <tr><td>Globenbauer</td><td><input type="text" id="w5" placeholder="…"></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ERWEITERTE DENKAUFGABE MIT ERKLÄRUNG -->
+  <section>
+    <h2><span class="cap">§</span> Denkaufgabe: Rund auf Flach</h2>
+
+    <details id="briefing" open>
+      <summary>Aufgabenstellung (erst lesen)</summary>
+      <div style="margin-top:8px">
+        <p><strong>Problem:</strong> Die Erde ist rund. Eine Karte ist flach. Beim „Auseinanderziehen“ entstehen <em>Verzerrungen</em> (Größe, Form, Abstände).</p>
+        <p><strong>Dein Ziel:</strong> Zeige mit Worten oder Skizze, <em>wie</em>/<em>wo</em> solche Verzerrungen entstehen – und warum die Mercator-Projektion trotz Verzerrungen für Navigation nützlich war.</p>
+        <ul class="hintlist">
+          <li>Orange-Schale: abziehen → flach ausbreiten → Risse/Falten.</li>
+          <li>„Gores“ (Längsstreifen) nebeneinander legen.</li>
+          <li>Zylinder-Projektion: am Äquator ok, zu den Polen wächst alles.</li>
+        </ul>
+        <div class="criteria">
+          <label><input type="checkbox" id="sc1"> Ich nenne eine Verzerrung.</label>
+          <label><input type="checkbox" id="sc2"> Ich erkläre kurz, wie sie entsteht.</label>
+          <label><input type="checkbox" id="sc3"> Bezug zu Mercator (Navigation/Geradlinigkeit).</label>
+          <label><input type="checkbox" id="sc4"> Skizze oder Beispiel (z. B. Grönland vs. Afrika).</label>
+          <label><input type="checkbox" id="sc5"> Klare, einfache Sätze.</label>
+        </div>
+      </div>
+    </details>
+
+    <p class="hint">Beschreibe Probleme oder skizziere eine Idee.</p>
+    <textarea id="think" placeholder="Meine Erklärung …"></textarea>
+
+    <!-- Neue Größen-Umschaltung -->
+    <div class="size-tools" aria-label="Zeichenfläche Größe">
+      <button id="size-normal" class="ghost">Größe: Normal</button>
+      <button id="size-large"  class="primary">Größe: Groß (×2)</button>
+    </div>
+
+    <div class="canvas-tools" aria-label="Zeichenwerkzeuge">
+      <button id="pen">✒️ Stift</button>
+      <button id="eraser">🧽 Radierer</button>
+      <button id="clear-canvas" class="ghost">🗑️ Zeichenfläche leeren</button>
+    </div>
+
+    <div class="canvas-box" id="canvasBox" aria-label="Skizzenfeld">
+      <canvas id="sketch" width="1000" height="600" aria-label="Skizze zur Projektion"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="cap">§</span> Vorbereitung auf den KI-Chat</h2>
+    <p class="hint">Formuliere mind. drei Fragen an „Gerhard Mercator“.</p>
+    <div class="grid-3">
+      <textarea id="ask1" placeholder="Frage #1 …"></textarea>
+      <textarea id="ask2" placeholder="Frage #2 …"></textarea>
+      <textarea id="ask3" placeholder="Frage #3 …"></textarea>
+    </div>
+    <div class="grid-2" style="margin-top:10px">
+      <textarea id="ask4" placeholder="Frage #4 (optional) …"></textarea>
+      <textarea id="ask5" placeholder="Frage #5 (optional) …"></textarea>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="cap">§</span> Nach dem Chat – Auswertung</h2>
+    <div class="grid-2">
+      <div><label>Was hat dich am meisten überrascht?</label><textarea id="post1"></textarea></div>
+      <div><label>Was hast du Neues gelernt?</label><textarea id="post2"></textarea></div>
+      <div><label>Wie wirkt Mercator als Person?</label><textarea id="post3"></textarea></div>
+      <div><label>Was ist anders als mit einem echten Menschen?</label><textarea id="post4"></textarea></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="cap">§</span> Bonus: Größenvergleich</h2>
+    <p class="hint">Grönland vs. Afrika – echte Fläche und Kartentrick?</p>
+    <div class="grid-2">
+      <textarea id="bonus1" placeholder="Grönland: Fläche / Erkenntnis …"></textarea>
+      <textarea id="bonus2" placeholder="Afrika: Fläche / Erkenntnis …"></textarea>
+    </div>
+    <textarea id="bonus3" placeholder="Warum wirken sie verschieden groß? …" style="margin-top:10px"></textarea>
+  </section>
+
+  <footer>
+    © Unterrichtsmaterial – Gerhard Mercator | PDF-Export & JSON-Speicher | iPad optimiert
+  </footer>
+</div>
+
+<script>
+/* ----------------------- Helpers ----------------------- */
+const $ = (sel) => document.querySelector(sel);
+const fields = [
+  "fld-name","fld-class","fld-date",
+  "fact1","fact2","fact3",
+  "q1","q2","q3","q4","q5","q6",
+  "w1","w2","w3","w4","w5",
+  "think",
+  "ask1","ask2","ask3","ask4","ask5",
+  "post1","post2","post3","post4",
+  "bonus1","bonus2","bonus3"
+];
+const checkFields = ["sc1","sc2","sc3","sc4","sc5"];
+
+const CANVAS_KEY = "mercator_canvas_png";
+const LOCAL_KEY  = "mercator_sheet_v4";
+const SIZE_KEY   = "mercator_sketch_size"; // "normal" | "large"
+
+/* ------------------- Canvas Setup (Retina) --------------- */
+const canvas = document.getElementById("sketch");
+const ctx = canvas.getContext("2d", { willReadFrequently: true });
+const canvasBox = document.getElementById("canvasBox");
+
+function resizeCanvasForDPR(){
+  const ratio = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+  const cssW = canvas.clientWidth;
+  const cssH = canvas.clientHeight;
+  canvas.width  = Math.floor(cssW * ratio);
+  canvas.height = Math.floor(cssH * ratio);
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
+
+function redrawFromDataURL(dataURL){
+  return new Promise((resolve)=>{
+    if(!dataURL) return resolve();
+    const img = new Image();
+    img.onload = ()=>{ ctx.globalCompositeOperation="source-over"; ctx.drawImage(img,0,0,canvas.clientWidth, canvas.clientHeight); resolve(); };
+    img.src = dataURL;
+  });
+}
+
+function setSketchSize(mode){
+  // mode: "normal" -> 260px, "large" -> 520px (×2)
+  const target = (mode === "large") ? "520px" : "260px";
+  document.documentElement.style.setProperty('--sketch-h', target);
+  localStorage.setItem(SIZE_KEY, mode);
+
+  // aktuelle Zeichnung sichern, dann DPR-Resize und wiederherstellen
+  const backup = canvas.toDataURL("image/png");
+  resizeCanvasForDPR();
+  redrawFromDataURL(backup);
+}
+
+function initSketchSize(){
+  const saved = localStorage.getItem(SIZE_KEY) || "large"; // Default: groß (×2) wie gewünscht
+  setSketchSize(saved);
+  // Buttons markieren
+  $("#size-normal").classList.toggle("primary", saved==="normal");
+  $("#size-large").classList.toggle("primary", saved==="large");
+}
+
+/* ------------------- Zeichnen (Pointer Events) ---------- */
+let drawing = false;
+let mode = "pen";
+let last = null;
+canvas.style.touchAction = "none";
+
+function getPosFromPointer(evt){
+  const rect = canvas.getBoundingClientRect();
+  const x = (evt.clientX - rect.left) * (canvas.width / rect.width);
+  const y = (evt.clientY - rect.top)  * (canvas.height / rect.height);
+  // Rückrechnung auf CSS-Pixel, da wir oben transformiert haben
+  const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+  return { x: x / dpr, y: y / dpr };
+}
+function beginDraw(evt){ drawing=true; last=getPosFromPointer(evt); evt.preventDefault(); }
+function endDraw(){ drawing=false; last=null;
+  if($("#autosave-toggle").checked){ try{ localStorage.setItem(CANVAS_KEY, canvas.toDataURL("image/png")); }catch(e){} }
+}
+function draw(evt){
+  if(!drawing) return;
+  const p = getPosFromPointer(evt);
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  if(mode==="pen"){ ctx.globalCompositeOperation="source-over"; ctx.strokeStyle="#2d2117"; ctx.lineWidth=2.4; }
+  else{ ctx.globalCompositeOperation="destination-out"; ctx.strokeStyle="#000"; ctx.lineWidth=18; }
+  ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke();
+  last=p; evt.preventDefault();
+}
+
+canvas.addEventListener("pointerdown", beginDraw, {passive:false});
+canvas.addEventListener("pointermove", draw, {passive:false});
+window.addEventListener("pointerup", endDraw, {passive:true});
+window.addEventListener("pointercancel", endDraw, {passive:true});
+canvas.addEventListener("touchmove", (e)=> e.preventDefault(), {passive:false});
+
+window.addEventListener("resize", ()=>{
+  const backup = canvas.toDataURL("image/png");
+  resizeCanvasForDPR();
+  redrawFromDataURL(backup);
+}, {passive:true});
+
+/* ------------------- JSON / Persistenz ------------------ */
+function collectData(){
+  const data = {};
+  for(const id of fields){ const el=document.getElementById(id); data[id]=el?el.value:""; }
+  for(const id of checkFields){ const el=document.getElementById(id); data[id]=el?!!el.checked:false; }
+  data.canvas = canvas.toDataURL("image/png");
+  data.size   = localStorage.getItem(SIZE_KEY) || "large";
+  data._meta  = { exportedAt:new Date().toISOString(), version:4 };
+  return data;
+}
+function applyData(obj){
+  for(const id of fields){ if(typeof obj[id]==="string" && document.getElementById(id)) document.getElementById(id).value=obj[id]; }
+  for(const id of checkFields){ if(typeof obj[id]==="boolean" && document.getElementById(id)) document.getElementById(id).checked=obj[id]; }
+  if(obj.size){ setSketchSize(obj.size); }
+}
+function blobFromJSON(data){ return new Blob([JSON.stringify(data,null,2)], {type:"application/json"}); }
+
+async function downloadJSON(){
+  const url = URL.createObjectURL(blobFromJSON(collectData()));
+  const a=document.createElement("a");
+  const name=($("#fld-name").value||"unbekannt").replace(/[^\w\-]+/g,"_");
+  a.href=url; a.download=`Arbeitsblatt_Mercator_${name}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+async function shareJSONiOS(){
+  try{
+    const file=new File([blobFromJSON(collectData())],"Arbeitsblatt_Mercator.json",{type:"application/json"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:"Arbeitsblatt Mercator", text:"Mein Arbeitsstand als JSON"}); return true;
+    }
+  }catch(e){}
+  return false;
+}
+async function copyJSONToClipboard(){
+  try{ await navigator.clipboard.writeText(JSON.stringify(collectData(),null,2)); alert("JSON wurde in die Zwischenablage kopiert."); }
+  catch(e){ alert("Kopieren nicht erlaubt – bitte Download/Teilen nutzen."); }
+}
+function loadFromJSON(obj){
+  if(!obj) return;
+  applyData(obj);
+  if(obj.canvas){ redrawFromDataURL(obj.canvas).then(()=>{ if($("#autosave-toggle").checked){ try{ localStorage.setItem(CANVAS_KEY, canvas.toDataURL("image/png")); }catch(e){} } }); }
+}
+
+/* ------------------- Auto-Save lokal --------------------- */
+function autosaveTick(){ if(!$("#autosave-toggle").checked) return; try{ localStorage.setItem(LOCAL_KEY, JSON.stringify(collectData())); }catch(e){} }
+function loadFromLocal(){
+  try{
+    const raw=localStorage.getItem(LOCAL_KEY);
+    if(raw){ loadFromJSON(JSON.parse(raw)); }
+    const cimg=localStorage.getItem(CANVAS_KEY);
+    if(cimg){ redrawFromDataURL(cimg); }
+  }catch(e){}
+}
+
+/* ------------------- PDF / Drucken ----------------------- */
+function doPrint(){ setTimeout(()=>window.print(), 60); }
+
+/* ------------------- Event Wiring ----------------------- */
+document.addEventListener("DOMContentLoaded", ()=>{
+  // Größe initial setzen (Default: groß ×2)
+  initSketchSize();
+  resizeCanvasForDPR();
+
+  // Größe-Umschalter
+  $("#size-normal").addEventListener("click", ()=>{
+    setSketchSize("normal");
+    $("#size-normal").classList.add("primary"); $("#size-large").classList.remove("primary");
+  }, {passive:true});
+  $("#size-large").addEventListener("click", ()=>{
+    setSketchSize("large");
+    $("#size-large").classList.add("primary"); $("#size-normal").classList.remove("primary");
+  }, {passive:true});
+
+  // Speicher/Teilen
+  $("#btn-save-json").addEventListener("click", downloadJSON, {passive:true});
+  $("#btn-copy-json").addEventListener("click", copyJSONToClipboard, {passive:true});
+  $("#btn-share-json").addEventListener("click", async ()=>{
+    const ok = await shareJSONiOS();
+    if(!ok){ await downloadJSON(); alert("Teilen nicht verfügbar – Datei wurde heruntergeladen."); }
+  }, {passive:true});
+
+  $("#btn-load-json").addEventListener("click", ()=> $("#file-load-json").click(), {passive:true});
+  $("#file-load-json").addEventListener("change", (e)=>{
+    const f=e.target.files[0]; if(!f) return;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{ try{ loadFromJSON(JSON.parse(ev.target.result)); } catch(err){ alert("Datei konnte nicht gelesen werden (keine gültige JSON)."); } };
+    reader.readAsText(f,"utf-8");
+  });
+
+  $("#btn-paste-json").addEventListener("click", async ()=>{
+    try{ const txt=await navigator.clipboard.readText(); loadFromJSON(JSON.parse(txt)); }
+    catch(e){ alert("Konnte nicht aus der Zwischenablage lesen. Erlaube Zugriff oder nutze Datei-Import."); }
+  });
+
+  $("#btn-print").addEventListener("click", doPrint, {passive:true});
+  $("#btn-reset").addEventListener("click", ()=>{
+    if(confirm("Alle Eingaben wirklich löschen?")){
+      for(const id of fields){ const el=document.getElementById(id); if(el) el.value=""; }
+      for(const id of checkFields){ const el=document.getElementById(id); if(el) el.checked=false; }
+      const backupBlank = null;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      try{ localStorage.removeItem(LOCAL_KEY); localStorage.removeItem(CANVAS_KEY);}catch(e){}
+    }
+  }, {passive:true});
+
+  try{
+    const remembered = localStorage.getItem("mercator_autosave_on") === "1";
+    $("#autosave-toggle").checked = remembered;
+    $("#autosave-toggle").addEventListener("change", e=>{
+      try{ localStorage.setItem("mercator_autosave_on", e.target.checked ? "1" : "0"); }catch(_){}
+      if(e.target.checked){ autosaveTick(); }
+    }, {passive:true});
+  }catch(e){}
+
+  setInterval(autosaveTick, 1500);
+  for(const id of fields){ const el=document.getElementById(id); if(el){ el.addEventListener("input", autosaveTick, {passive:true}); el.addEventListener("change", autosaveTick, {passive:true}); } }
+  for(const id of checkFields){ const el=document.getElementById(id); if(el){ el.addEventListener("change", autosaveTick, {passive:true}); } }
+
+  if(!$("#fld-date").value){ const d=new Date(); $("#fld-date").value=d.toISOString().slice(0,10); }
+
+  loadFromLocal();
+
+  $("#pen").addEventListener("click", ()=>{ mode="pen"; }, {passive:true});
+  $("#eraser").addEventListener("click", ()=>{ mode="eraser"; }, {passive:true});
+  $("#clear-canvas").addEventListener("click", ()=>{
+    if(confirm("Zeichenfläche leeren?")){ ctx.clearRect(0,0,canvas.width, canvas.height); autosaveTick(); }
+  }, {passive:true});
+});
+</script>
+</body>
+</html>

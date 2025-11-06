@@ -23,6 +23,8 @@
             --gold-light: #daa520;
             --shadow-dark: rgba(44, 36, 22, 0.3);
             --border-ornate: #8b6f47;
+            --user-bubble: #e8d4b8;
+            --user-border: #9b8257;
         }
 
         body {
@@ -64,7 +66,7 @@
             );
         }
 
-        /* Hauptcontainer - ANGEPASST für Side-by-Side Layout */
+        /* Hauptcontainer */
         .main-container {
             position: relative;
             z-index: 1;
@@ -73,13 +75,6 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            transition: transform 0.5s ease-out, margin-right 0.5s ease-out;
-        }
-
-        /* NEU: Wenn Bild aktiv ist, verschiebt sich der Chat leicht nach links */
-        .main-container.image-active {
-            transform: translateX(-5%);
-            margin-right: 45%;
         }
 
         /* Header mit Wappen */
@@ -194,11 +189,11 @@
 
         /* Globus rechts */
         .globe-container {
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
             position: relative;
             animation: fadeIn 2s ease-out 1s both;
-            margin-right: 10px;
+            margin-right: 20px;
         }
 
         .globe-image {
@@ -223,7 +218,7 @@
                 );
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
 
         /* Scrollbar Styling */
@@ -247,278 +242,236 @@
             animation: fadeIn 0.5s ease-out;
         }
 
-        /* Sprechblase für Mercator */
-        .message.assistant {
-            align-items: flex-start;
-        }
-
-        .sender-label {
-            font-family: 'Cinzel', serif;
-            font-size: 0.85rem;
-            color: var(--gold);
-            margin-bottom: 5px;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .speech-bubble {
-            max-width: 85%;
-            padding: 20px 25px;
-            background: white;
-            border: 2px solid var(--border-ornate);
-            border-radius: 20px 20px 20px 5px;
-            color: var(--ink-black);
-            font-size: 1.1rem;
-            line-height: 1.7;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            position: relative;
-        }
-
-        .speech-bubble::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: -10px;
-            width: 0;
-            height: 0;
-            border-style: solid;
-            border-width: 0 15px 15px 0;
-            border-color: transparent var(--border-ornate) transparent transparent;
-        }
-
-        /* Benutzer-Nachricht */
         .message.user {
             align-items: flex-end;
         }
 
-        .user-bubble {
-            max-width: 85%;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
-            border: 2px solid var(--gold);
-            border-radius: 20px 20px 5px 20px;
-            color: white;
-            font-size: 1.05rem;
-            line-height: 1.6;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .message.assistant {
+            align-items: flex-start;
         }
 
-        /* Input-Bereich */
-        .chat-input-container {
-            padding: 20px 25px;
-            background: linear-gradient(to top, var(--parchment-dark), var(--parchment-light));
-            border-top: 2px solid var(--border-ornate);
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 15px 20px;
+        /* Sprechblase - Mercator */
+        .speech-bubble {
+            background: rgba(255, 255, 255, 0.6);
             border: 2px solid var(--border-ornate);
-            border-radius: 25px;
-            background: white;
-            font-family: 'Crimson Text', serif;
-            font-size: 1rem;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.15rem;
+            line-height: 1.8;
             color: var(--ink-black);
-            outline: none;
-            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            max-width: 85%;
         }
 
-        .chat-input:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 10px rgba(184, 134, 11, 0.3);
-        }
-
-        .send-button {
-            padding: 15px 30px;
-            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
-            border: 2px solid var(--gold);
-            border-radius: 25px;
-            color: white;
+        .speech-bubble::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 3rem;
+            color: var(--gold);
             font-family: 'Cinzel', serif;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .send-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        /* User Bubble - Schüler */
+        .user-bubble {
+            background: var(--user-bubble);
+            border: 2px solid var(--user-border);
+            border-radius: 15px;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--ink-black);
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            max-width: 75%;
+            position: relative;
         }
 
-        .send-button:active {
-            transform: translateY(0);
+        .user-bubble::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: 15px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--user-border);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
         }
 
-        /* Typing Indicator */
-        .typing-indicator {
-            display: flex;
-            gap: 5px;
-            padding: 10px;
+        /* Sender Label */
+        .sender-label {
+            font-size: 0.85rem;
+            color: #6b5a3a;
+            margin-bottom: 5px;
+            font-style: italic;
         }
 
-        .typing-indicator span {
-            width: 10px;
-            height: 10px;
-            background: var(--gold);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
-        }
-
-        /* ====================================================
-           NEU: SIDE-SLIDING IMAGE PANEL MIT ELEGANTER ANIMATION
-           ==================================================== */
-        
-        /* Overlay-Hintergrund (halbtransparent) */
+        /* Pergament Modal */
         .pergament-modal {
             display: none;
             position: fixed;
-            z-index: 1000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease-out;
         }
 
         .pergament-modal.active {
-            display: block;
-            opacity: 1;
+            display: flex;
         }
 
-        /* Das eigentliche Bild-Panel (von rechts einslidend) */
+        .pergament-container {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .pergament-scroll {
+            width: 100%;
+            height: auto;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+
         .pergament-content {
-            position: fixed;
-            right: 0;
-            top: 0;
-            width: 50%;
-            height: 100%;
-            background: var(--parchment-light);
-            border-left: 4px solid var(--border-ornate);
-            box-shadow: 
-                -10px 0 40px rgba(0, 0, 0, 0.8),
-                inset 0 0 100px rgba(212, 184, 150, 0.3);
-            padding: 60px 40px 40px 40px;
-            overflow-y: auto;
-            
-            /* Startzustand: außerhalb des Bildschirms, unsichtbar */
-            transform: translateX(100%);
-            opacity: 0;
-            
-            /* Elegante Animation */
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
-                        opacity 0.6s ease-out;
-        }
-
-        /* Aktiver Zustand: sichtbar und an Position */
-        .pergament-modal.active .pergament-content {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        /* Scrollbar für das Bild-Panel */
-        .pergament-content::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        .pergament-content::-webkit-scrollbar-track {
-            background: var(--parchment-dark);
-        }
-
-        .pergament-content::-webkit-scrollbar-thumb {
-            background: var(--border-ornate);
-            border-radius: 5px;
-        }
-
-        /* Close Button */
-        .pergament-close {
             position: absolute;
-            top: 20px;
-            right: 30px;
-            font-size: 2.5rem;
-            color: var(--gold);
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            line-height: 1;
-            z-index: 10;
+            top: 15%;
+            left: 12%;
+            right: 12%;
+            bottom: 15%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        .pergament-close:hover {
-            transform: scale(1.2) rotate(90deg);
-            color: var(--gold-light);
-        }
-
-        /* Bildinhalt */
         .pergament-image {
             max-width: 100%;
-            height: auto;
-            border: 3px solid var(--border-ornate);
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            max-height: 70%;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         .pergament-title {
             font-family: 'Cinzel', serif;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: var(--ink-black);
-            margin-bottom: 15px;
+            margin-top: 20px;
             text-align: center;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
         }
 
         .pergament-description {
+            font-family: 'Crimson Text', serif;
             font-size: 1.1rem;
-            line-height: 1.6;
-            color: #5a4a3a;
+            color: var(--ink-black);
+            margin-top: 10px;
             text-align: center;
             font-style: italic;
+            max-width: 80%;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            z-index: 10000;
+        }
+
+        .close-modal:hover {
+            background: var(--gold-light);
+            transform: scale(1.1);
         }
 
         /* Loading Spinner */
         .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid var(--parchment-dark);
-            border-top: 5px solid var(--gold);
+            border: 4px solid rgba(184, 134, 11, 0.3);
+            border-top: 4px solid var(--gold);
             border-radius: 50%;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin: 50px auto;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Input-Bereich */
+        .chat-input-container {
+            padding: 25px;
+            background: linear-gradient(to top, var(--parchment-dark), var(--parchment-light));
+            border-top: 2px solid var(--border-ornate);
+            animation: slideInUp 1s ease-out 0.9s both;
         }
 
-        /* Ornament für Bildpanel */
-        .pergament-content::before {
-            content: '❦';
-            position: absolute;
-            top: 20px;
-            left: 30px;
-            font-size: 2rem;
-            color: var(--gold);
-            opacity: 0.3;
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--border-ornate);
+            border-radius: 25px;
+            padding: 5px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #chat-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 12px 20px;
+            font-size: 1.05rem;
+            font-family: 'Crimson Text', serif;
+            color: var(--ink-black);
+            outline: none;
+        }
+
+        #chat-input::placeholder {
+            color: #8b7355;
+            font-style: italic;
+        }
+
+        .send-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+
+        .send-icon:hover {
+            background: var(--gold-light);
+            transform: scale(1.1);
+        }
+
+        .send-icon::after {
+            content: '→';
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
         }
 
         /* Animationen */
@@ -582,9 +535,53 @@
             to { opacity: 1; }
         }
 
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: inline-block;
+        }
+
+        .typing-indicator span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
         }
 
         /* Responsive Design */
@@ -597,6 +594,53 @@
                 font-size: 0.95rem;
             }
 
+            .coat-of-arms {
+                width: 60px;
+            }
+
+            .mercator-portrait {
+                width: 60px;
+            }
+
+            .globe-container {
+                width: 90px;
+                height: 90px;
+            }
+
+            .mercator-info h2 {
+                font-size: 1.4rem;
+            }
+
+            .chat-messages {
+                min-height: 300px;
+                max-height: 400px;
+                padding: 20px;
+            }
+
+            .speech-bubble,
+            .user-bubble {
+                font-size: 1rem;
+                padding: 15px;
+                max-width: 90%;
+            }
+
+            .pergament-content {
+                top: 20%;
+                left: 8%;
+                right: 8%;
+                bottom: 20%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 1.5rem;
+            }
+
             .mercator-header {
                 flex-direction: column;
                 text-align: center;
@@ -604,7 +648,7 @@
 
             .mercator-left {
                 flex-direction: column;
-                margin-bottom: 20px;
+                margin-bottom: 15px;
             }
 
             .mercator-portrait {
@@ -613,122 +657,78 @@
             }
 
             .globe-container {
-                width: 150px;
-                height: 150px;
-            }
-
-            .chat-messages {
-                padding: 20px;
-                max-height: 400px;
-            }
-
-            .speech-bubble,
-            .user-bubble {
-                max-width: 95%;
-            }
-
-            .chat-input-container {
-                flex-direction: column;
-            }
-
-            .send-button {
-                width: 100%;
-            }
-
-            /* Mobile: Bild-Panel nutzt volle Breite */
-            .pergament-content {
-                width: 90%;
-                left: 5%;
-                border-radius: 20px 0 0 20px;
-            }
-
-            .main-container.image-active {
-                transform: translateX(-10%);
-                margin-right: 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .title {
-                font-size: 1.6rem;
-            }
-
-            .mercator-info h2 {
-                font-size: 1.4rem;
-            }
-
-            .globe-container {
-                width: 120px;
-                height: 120px;
-            }
-
-            .pergament-content {
-                width: 100%;
-                left: 0;
-                border-radius: 0;
-            }
-
-            .main-container.image-active {
-                transform: translateX(0);
-                margin-right: 0;
+                width: 70px;
+                height: 70px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Hintergrund -->
+
+    <!-- Pergament Modal -->
+    <div class="pergament-modal" id="pergament-modal">
+        <div class="close-modal" id="close-modal">×</div>
+        <div class="pergament-container">
+            <img src="{{ url_for('static', filename='pergament.png') }}" alt="Pergamentrolle" class="pergament-scroll">
+            <div class="pergament-content" id="pergament-content">
+                <div class="loading-spinner" id="loading-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hintergrundbild -->
     <div class="background-image">
-        <img src="/static/duisburg.png" alt="Duisburg 1569">
+        <img src="{{ url_for('static', filename='duisburg.png') }}" alt="Duisburg im 16. Jahrhundert">
         <div class="background-overlay"></div>
     </div>
 
     <!-- Hauptcontainer -->
-    <div class="main-container" id="main-container">
+    <div class="main-container">
+        
         <!-- Header -->
         <div class="header">
-            <img src="/static/stadtwappen.png" alt="Wappen von Duisburg" class="coat-of-arms">
-            <h1 class="title">MERCATOR</h1>
-            <p class="subtitle">Ein Gespräch mit Gerhard Mercator • Duisburg 1569</p>
+            <img src="{{ url_for('static', filename='stadtwappen.png') }}" alt="Stadtwappen Duisburg" class="coat-of-arms">
+            <h1 class="title">Audienz bei Mercator</h1>
+            <p class="subtitle">Duisburg, Anno Domini 1569</p>
         </div>
 
         <!-- Chat Container -->
         <div class="chat-container">
+            
             <!-- Mercator Header -->
             <div class="mercator-header">
                 <div class="mercator-left">
-                    <img src="/static/mercator.png" alt="Gerhard Mercator" class="mercator-portrait">
+                    <img src="{{ url_for('static', filename='mercator.png') }}" alt="Gerhard Mercator" class="mercator-portrait">
                     <div class="mercator-info">
                         <h2>Gerhard Mercator</h2>
-                        <p>Kartograph & Kosmograph</p>
+                        <p>Kartograph, Kosmograph & Gelehrter</p>
                     </div>
                 </div>
+                
+                <!-- Globus rechts -->
                 <div class="globe-container">
-                    <img src="/static/globus.png" alt="Globus" class="globe-image">
+                    <img src="{{ url_for('static', filename='globus.png') }}" alt="Mercator Globus" class="globe-image">
                 </div>
             </div>
 
             <!-- Chat Messages -->
-            <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages werden hier dynamisch eingefügt -->
+            </div>
 
             <!-- Input Area -->
             <div class="chat-input-container">
-                <input 
-                    type="text" 
-                    id="chat-input" 
-                    class="chat-input" 
-                    placeholder="Stellt Eure Fragen an den Meister der Kartografie..."
-                    autocomplete="off"
-                >
-                <button id="send-button" class="send-button">Senden</button>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="chat-input" 
+                        placeholder="Stellt Eure Frage an den Meister..."
+                        autocomplete="off"
+                    >
+                    <div class="send-icon" id="send-button"></div>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Pergament Modal für Bilder (NEU: Side-Sliding Panel) -->
-    <div class="pergament-modal" id="pergament-modal">
-        <div class="pergament-content" id="pergament-content">
-            <span class="pergament-close" id="pergament-close">×</span>
-            <!-- Dynamischer Inhalt wird hier eingefügt -->
         </div>
     </div>
 
@@ -737,59 +737,49 @@
         const chatInput = document.getElementById('chat-input');
         const sendButton = document.getElementById('send-button');
         const pergamentModal = document.getElementById('pergament-modal');
+        const closeModal = document.getElementById('close-modal');
         const pergamentContent = document.getElementById('pergament-content');
-        const closeModal = document.getElementById('pergament-close');
-        const mainContainer = document.getElementById('main-container');
+        const loadingSpinner = document.getElementById('loading-spinner');
         
-        // API URLs - relativ für Render.com, localhost für lokale Entwicklung
+        // API URLs
         const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
             ? 'http://127.0.0.1:5000/chat-mercator'
             : '/chat-mercator';
-
+        
         const IMAGE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
             ? 'http://127.0.0.1:5000/get-image'
             : '/get-image';
 
-        let isTyping = false;
+        // Conversation History
         let conversationHistory = [];
+        let isTyping = false;
 
         // Modal schließen
         closeModal.addEventListener('click', () => {
             pergamentModal.classList.remove('active');
-            mainContainer.classList.remove('image-active');
         });
 
+        // Modal schließen bei Klick außerhalb
         pergamentModal.addEventListener('click', (e) => {
             if (e.target === pergamentModal) {
                 pergamentModal.classList.remove('active');
-                mainContainer.classList.remove('image-active');
             }
         });
 
         // Bild auf Pergament anzeigen
         function showImageOnPergament(imageUrl, title, description) {
             pergamentContent.innerHTML = `
-                <span class="pergament-close" id="pergament-close-dynamic">×</span>
                 <img src="${imageUrl}" alt="${title}" class="pergament-image">
                 <h2 class="pergament-title">${title}</h2>
                 ${description ? `<p class="pergament-description">${description}</p>` : ''}
             `;
-            
-            // Event-Listener für den dynamisch erstellten Close-Button
-            document.getElementById('pergament-close-dynamic').addEventListener('click', () => {
-                pergamentModal.classList.remove('active');
-                mainContainer.classList.remove('image-active');
-            });
-            
             pergamentModal.classList.add('active');
-            mainContainer.classList.add('image-active');
         }
 
         // Bild anfragen
         async function requestImage(query) {
             pergamentContent.innerHTML = '<div class="loading-spinner"></div>';
             pergamentModal.classList.add('active');
-            mainContainer.classList.add('image-active');
             
             try {
                 const response = await fetch(IMAGE_API_URL, {
@@ -808,31 +798,21 @@
                     showImageOnPergament(data.image_url, data.title, data.description);
                 } else {
                     pergamentContent.innerHTML = `
-                        <span class="pergament-close" id="pergament-close-dynamic">×</span>
                         <h2 class="pergament-title">Kein Abbild gefunden</h2>
                         <p class="pergament-description">Verzeiht, werter Gast. Von diesem Werk habe ich leider kein Abbild zur Hand.</p>
                     `;
-                    document.getElementById('pergament-close-dynamic').addEventListener('click', () => {
-                        pergamentModal.classList.remove('active');
-                        mainContainer.classList.remove('image-active');
-                    });
                 }
             } catch (error) {
                 console.error('Fehler beim Laden des Bildes:', error);
                 pergamentContent.innerHTML = `
-                    <span class="pergament-close" id="pergament-close-dynamic">×</span>
                     <h2 class="pergament-title">Fehler</h2>
                     <p class="pergament-description">Es gab ein Problem beim Laden des Abbilds.</p>
                 `;
-                document.getElementById('pergament-close-dynamic').addEventListener('click', () => {
-                    pergamentModal.classList.remove('active');
-                    mainContainer.classList.remove('image-active');
-                });
             }
         }
 
         // Funktion um eine Nachricht hinzuzufügen
-        function addMessage(role, content) {
+        function addMessage(role, content, animated = true) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
             
@@ -955,10 +935,9 @@
                 const data = await response.json();
                 const aiAntwort = data.reply;
                 
-                // Prüfen, ob der Server ein Bild senden will
+                // Prüfen ob ein Bild angefordert werden soll
                 if (data.show_image && data.image_query) {
-                    console.log(`💡 Server hat Bild-Anfrage gesendet für: ${data.image_query}`);
-                    requestImage(data.image_query); 
+                    requestImage(data.image_query);
                 }
                 
                 // Typing Indicator entfernen
